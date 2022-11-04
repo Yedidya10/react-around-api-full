@@ -18,4 +18,5 @@ npm-debug.log*
 .vscode
 
 .prettierrc.js
-.eslintrc
+.eslintrc.json
+.editorconfig
