@@ -4,10 +4,10 @@ logs
 npm-debug.log*
 
 # env
-.env
+# .env
 
 # Dependency directory
-node_modules
+# node_modules
 
 # Optional npm cache directory
 .npm
@@ -16,3 +16,6 @@ node_modules
 .DS_Store
 .idea
 .vscode
+
+.prettierrc.js
+.eslintrc
