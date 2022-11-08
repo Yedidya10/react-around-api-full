@@ -23,7 +23,7 @@ router.patch(
       about: Joi.string().required().min(2).max(30),
     }),
   }),
-  patchUserProfile,
+  patchUserProfile
 );
 router.patch(
   '/me/avatar',
@@ -32,7 +32,7 @@ router.patch(
       avatar: Joi.string().required().custom(validate),
     }),
   }),
-  patchUserAvatar,
+  patchUserAvatar
 );
 
 module.exports = router;

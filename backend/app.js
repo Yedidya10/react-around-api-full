@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
-const { celebrate, Joi } = require('celebrate');
-const { errors } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const errorHandlers = require('./middlewares/errorHandlers');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
@@ -16,7 +15,7 @@ const { postUser, login } = require('./controllers/users');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 dotenv.config();
-
+require('dotenv').config();
 const {
   NOT_FOUND_ERROR_CODE,
   // UNAUTHORIZED_ERROR_CODE,
@@ -33,9 +32,6 @@ app.use(helmet());
 app.use(express.json());
 app.use(auth);
 
-app.post('/signin', login);
-app.post('/signup', postUser);
-
 // using CORS
 // const corsOptions = {
 //   origin: [
@@ -48,7 +44,6 @@ app.post('/signup', postUser);
 // };
 
 app.use(cors());
-app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -61,10 +56,10 @@ app.post(
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required(),
-      password: Joi.string().required().min(8),
+      password: Joi.string().required().min(8).max(30),
     }),
   }),
-  login,
+  login
 );
 
 app.post(
@@ -75,21 +70,21 @@ app.post(
       password: Joi.string().required().min(8).max(30),
     }),
   }),
-  postUser,
+  postUser
 );
 
 app.use('/', (req, res) => {
   res.status(NOT_FOUND_ERROR_CODE).send(notFoundMessage);
 });
 app.use((err, req, res) => res.status(SERVER_ERROR_CODE).send({ error: err }));
-
-// app.use(auth);
 app.use('/users', auth, users);
 app.use('/cards', auth, cards);
+
 app.get('*', () => {
   throw new Error(notFoundMessage);
 });
 
+app.use(requestLogger);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandlers);

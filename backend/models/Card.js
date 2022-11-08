@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const Card = new mongoose.Schema({
   name: {
@@ -14,12 +15,10 @@ const Card = new mongoose.Schema({
   link: {
     type: String,
     validate: {
-      validator(v) {
-        return /((https?:\/\/)?[^\s.]+\.[\w][^\s]+)/.test(v);
-      },
+      validator: (v) => validator.isURL(v, [{ allow_underscores: true }]),
       message: (props) => `${props.value} is not a valid url address!`,
     },
-    required: [true, 'User avatar url required'],
+    required: [true, 'image url required'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

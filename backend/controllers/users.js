@@ -1,16 +1,14 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
+const dotenv = require('dotenv');
+dotenv.config();
 const { NODE_ENV, JWT_SECRET } = process.env;
-require('dotenv').config();
-
 const {
   BAD_REQUEST_ERROR_CODE,
   NOT_FOUND_ERROR_CODE,
   SERVER_ERROR_CODE,
 } = require('../utils/errorCodes');
-
 let userId;
 
 const getUserInfo = async (req, res) => {
@@ -63,26 +61,23 @@ const getUsers = async (req, res) => {
 };
 
 const postUser = async (req, res, next) => {
-  const {
-    username,
-    about,
-    avatar,
-    email,
-    password,
-  } = req.body;
+  const { username, about, avatar, email, password } = req.body;
   try {
     const userEmail = await User.findOne({ email });
     if (userEmail) {
-      throw new Error(`User with email ${email} already exists`);
+      return res
+        .status(200)
+        .send({ message: `User with email ${email} already exists` });
     } else {
       try {
-        const passwordHash = bcrypt.hash(password, 10);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
         const user = await User.create({
           username,
           about,
           avatar,
           email,
-          password: passwordHash,
+          password: hashedPassword,
         });
         res.status(201).send(user);
       } catch (err) {
@@ -147,12 +142,12 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findUserByCredentials(email, password);
-    userId = user._id;
+    userId = await user._id;
     res.send({
       token: jwt.sign(
         { _id: userId },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' },
+        { expiresIn: '7d' }
       ),
     });
   } catch (err) {

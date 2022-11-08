@@ -1,31 +1,7 @@
+
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-
-// const User = Joi.object({
-//   username: Joi.string()
-//     .pattern(/^([A-Za-z0-9 ,'"`-])$/)
-//     .min(2)
-//     .max(30)
-//     .default('Jacques Cousteau'),
-
-//   password: Joi.string()
-//     .pattern(/^([a-zA-Z0-9])$/)
-//     .min(8)
-//     .max(30)
-//     .required(),
-
-//   email: Joi.string()
-//     .email({ minDomainSegments: 2, tlds: { allow: true } })
-//     .required(),
-
-//   about: Joi.string()
-//     .pattern(/^([A-Za-z0-9 ,'"`-])$/)
-//     .default('Explorer'),
-
-//   avatar: Joi.string()
-//     .domain()
-//     .default('https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg'),
-// });
+const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const User = new mongoose.Schema({
   username: {
@@ -34,29 +10,31 @@ const User = new mongoose.Schema({
       validator(v) {
         return /^([A-Za-z0-9 ,.'"`-]{2,30})$/gm.test(v);
       },
-      message: (props) => `${props.value} is not a valid name!`,
+      message: (props) => `${props.value} is not a valid username!`,
     },
-    required: [true, 'User name required'],
+    default: 'Jacques Cousteau',
   },
   email: {
     type: String,
     validate: {
-      validator(v) {
-        return /^((?!\.)[\w_.-]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm.test(v);
-      },
+      validator: (v) => validator.isEmail(v, {
+        require_tld: true,
+        allow_utf8_local_part: false,
+      }),
       message: (props) => `${props.value} is not a valid email!`,
     },
-    required: [true, 'email are required'],
+    required: [true, 'Email are required'],
   },
   password: {
     type: String,
     validate: {
       validator(v) {
-        return /^([A-Za-z0-9]{8,30})$/gm.test(v);
+        return /^([A-Za-z0-9#$!@&%]{8,30})$/gm.test(v);
       },
       message: (props) => `${props.value} is not a valid password!`,
     },
-    required: [true, 'password are required'],
+    required: [true, 'Password are required'],
+    select: false,
   },
   about: {
     type: String,
@@ -66,30 +44,32 @@ const User = new mongoose.Schema({
       },
       message: (props) => `${props.value} is not a valid about!`,
     },
-    required: [true, 'User about required'],
+    default: 'Explorer',
   },
   avatar: {
     type: String,
     validate: {
-      validator(v) {
-        return /((https?:\/\/)?[^\s.]+\.[\w][^\s]+)/gm.test(v);
-      },
+      validator: (v) => validator.isURL(v, [{ allow_underscores: true }]),
       message: (props) => `${props.value} is not a valid url address!`,
     },
-    required: [true, 'User avatar url required'],
+    default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
   },
 });
 
-User.statics.findUserByCredentials = async function(email, password) {
-  let user = await User.findOne({ email });
-  if (!user) {
-    throw new Error('Unable to Login');
-  }
-  const isMatch = bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    throw new Error('Unable to Login');
-  }
-  return user;
+userSchema.statics.findUserByCredentials = function(email, password) {
+  return this.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Incorrect email or password'));
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject(new Error('Incorrect email or password'));
+        }
+        return user;
+      });
+    });
 };
 
 module.exports = mongoose.model('user', User);
