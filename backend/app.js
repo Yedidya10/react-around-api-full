@@ -7,15 +7,15 @@ const { celebrate, Joi, errors } = require('celebrate');
 const errorHandlers = require('./middlewares/errorHandlers');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
-
-const app = express();
-const db = mongoose.connection;
 const notFoundMessage = require('./utils/notFound');
 const { postUser, login } = require('./controllers/users');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+
+const app = express();
+const db = mongoose.connection;
 dotenv.config();
-require('dotenv').config();
+
 const {
   NOT_FOUND_ERROR_CODE,
   // UNAUTHORIZED_ERROR_CODE,
@@ -59,7 +59,7 @@ app.post(
       password: Joi.string().required().min(8).max(30),
     }),
   }),
-  login
+  login,
 );
 
 app.post(
@@ -70,7 +70,7 @@ app.post(
       password: Joi.string().required().min(8).max(30),
     }),
   }),
-  postUser
+  postUser,
 );
 
 app.use('/', (req, res) => {

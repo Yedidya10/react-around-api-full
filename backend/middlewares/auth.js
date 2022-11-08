@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
-const { NODE_ENV, JWT_SECRET } = process.env;
-require('dotenv').config();
+const dotenv = require('dotenv');
 const { UNAUTHORIZED_ERROR_CODE } = require('../utils/errorCodes');
 
+dotenv.config();
+const { NODE_ENV, JWT_SECRET } = process.env;
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
@@ -16,7 +17,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(
       token,
-      NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'
+      NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
     );
   } catch (err) {
     res.status(UNAUTHORIZED_ERROR_CODE).send({ message: 'No token provided' });

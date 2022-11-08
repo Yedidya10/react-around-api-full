@@ -1,14 +1,16 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 const dotenv = require('dotenv');
-dotenv.config();
-const { NODE_ENV, JWT_SECRET } = process.env;
+const User = require('../models/User');
 const {
   BAD_REQUEST_ERROR_CODE,
   NOT_FOUND_ERROR_CODE,
   SERVER_ERROR_CODE,
 } = require('../utils/errorCodes');
+
+dotenv.config();
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 let userId;
 
 const getUserInfo = async (req, res) => {
@@ -61,38 +63,43 @@ const getUsers = async (req, res) => {
 };
 
 const postUser = async (req, res, next) => {
-  const { username, about, avatar, email, password } = req.body;
+  const {
+    username,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
   try {
     const userEmail = await User.findOne({ email });
     if (userEmail) {
       return res
         .status(200)
         .send({ message: `User with email ${email} already exists` });
-    } else {
-      try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        const user = await User.create({
-          username,
-          about,
-          avatar,
-          email,
-          password: hashedPassword,
-        });
-        res.status(201).send(user);
-      } catch (err) {
-        next(err);
-      }
+    }
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const user = await User.create({
+        username,
+        about,
+        avatar,
+        email,
+        password: hashedPassword,
+      });
+      return res.status(201).send(user);
+    } catch (err) {
+      return next(err);
     }
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
     } else if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      return res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      return res.status(SERVER_ERROR_CODE).send({ message: err.message });
     }
-    next(err);
+    return next(err);
   }
 };
 
@@ -147,7 +154,7 @@ const login = async (req, res, next) => {
       token: jwt.sign(
         { _id: userId },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' }
+        { expiresIn: '7d' },
       ),
     });
   } catch (err) {

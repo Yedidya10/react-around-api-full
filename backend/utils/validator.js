@@ -1,7 +1,7 @@
 const validator = require('validator');
 const {
   BAD_REQUEST_ERROR_CODE,
-} = require('./utils/errorCodes');
+} = require('./errorCodes');
 
 function validate(value) {
   if (validator.isURL(value, [{ allow_underscores: true }])) {

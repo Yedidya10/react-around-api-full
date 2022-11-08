@@ -17,7 +17,7 @@ router.delete(
       cardId: Joi.string().hex().length(24).required(),
     }),
   }),
-  deleteCard
+  deleteCard,
 );
 
 router.delete(
@@ -27,7 +27,7 @@ router.delete(
       cardId: Joi.string().hex().length(24).required(),
     }),
   }),
-  deleteCardLike
+  deleteCardLike,
 );
 
 router.get('/', getCards);
@@ -40,7 +40,7 @@ router.post(
       link: Joi.string().required().custom(validate),
     }),
   }),
-  postCard
+  postCard,
 );
 
 router.put(
@@ -50,7 +50,7 @@ router.put(
       cardId: Joi.string().hex().length(24).required(),
     }),
   }),
-  putCardLike
+  putCardLike,
 );
 
 module.exports = router;
