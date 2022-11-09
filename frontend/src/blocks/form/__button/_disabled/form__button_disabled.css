@@ -1,8 +1,0 @@
-.form__button_disabled {
-  opacity: .2;
-  cursor: auto;
-}
-
-.form__button_disabled:hover {
-  opacity: .2;
-}
