@@ -1,0 +1,5 @@
+.form__input_type_error {
+  visibility: hidden;
+  border-bottom: rgba(255, 0, 0, .2) 1px solid;
+  margin-bottom: 5px;
+}
