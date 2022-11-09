@@ -30,20 +30,7 @@ db.once('open', () => console.log('Connected to Database'));
 // Routes
 app.use(helmet());
 app.use(express.json());
-
-app.use(
-  cors({
-    origin: [
-      'http://www.yedidya.students.nomoredomainssbs.ru',
-      'http://yedidya.students.nomoredomainssbs.ru',
-      'https://www.yedidya.students.nomoredomainssbs.ru',
-      'https://yedidya.students.nomoredomainssbs.ru',
-      'https://api.yedidya.students.nomoredomainssbs.ru',
-      'http://api.yedidya.students.nomoredomainssbs.ru',
-    ],
-    optionsSuccessStatus: 200,
-  }),
-);
+app.use(cors());
 
 app.get('/crash-test', () => {
   setTimeout(() => {
