@@ -13,6 +13,7 @@ const users = require('./routes/users');
 const cards = require('./routes/cards');
 
 const app = express();
+app.use(cors());
 const db = mongoose.connection;
 dotenv.config();
 
@@ -30,7 +31,6 @@ db.once('open', () => console.log('Connected to Database'));
 // Routes
 app.use(helmet());
 app.use(express.json());
-app.use(cors());
 
 app.get('/crash-test', () => {
   setTimeout(() => {
