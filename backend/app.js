@@ -32,18 +32,17 @@ app.use(helmet());
 app.use(express.json());
 app.use(auth);
 
-// using CORS
-// const corsOptions = {
-//   origin: [
-//     'http://www.yedidya.students.nomoredomainssbs.ru',
-//     'http://yedidya.students.nomoredomainssbs.ru',
-//     'https://www.yedidya.students.nomoredomainssbs.ru',
-//     'https://yedidya.students.nomoredomainssbs.ru'
-//   ],
-//   optionsSuccessStatus: 200,
-// };
-
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'http://www.yedidya.students.nomoredomainssbs.ru',
+      'http://yedidya.students.nomoredomainssbs.ru',
+      'https://www.yedidya.students.nomoredomainssbs.ru',
+      'https://yedidya.students.nomoredomainssbs.ru',
+    ],
+    optionsSuccessStatus: 200,
+  }),
+);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
