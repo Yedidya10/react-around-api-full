@@ -38,6 +38,8 @@ app.use(
       'http://yedidya.students.nomoredomainssbs.ru',
       'https://www.yedidya.students.nomoredomainssbs.ru',
       'https://yedidya.students.nomoredomainssbs.ru',
+      'https://api.yedidya.students.nomoredomainssbs.ru',
+      'http://api.yedidya.students.nomoredomainssbs.ru',
     ],
     optionsSuccessStatus: 200,
   }),
