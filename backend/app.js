@@ -13,6 +13,7 @@ const cards = require('./routes/cards');
 
 const app = express();
 app.use(cors());
+app.options('*', cors());
 
 const db = mongoose.connection;
 dotenv.config();
