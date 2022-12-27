@@ -1,0 +1,15 @@
+.auth-form__submit-text {
+  padding: 15px 0 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+  color: #fff;
+}
+
+@media screen and (max-width: 620px) {
+  .auth-form__submit-text {
+    font-size: 12px;
+    line-height: 14.5px;
+  }
+}

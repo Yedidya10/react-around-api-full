@@ -1,0 +1,17 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  font-size: 14px;
+  line-height: 1.21;
+  max-width: 358px;
+  width: 358px;
+}
+
+@media screen and (max-width: 620px) {
+  .form {
+    width: 100%;
+    max-width: none;
+    gap: 46px;
+  }
+}

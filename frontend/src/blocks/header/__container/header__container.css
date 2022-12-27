@@ -1,0 +1,18 @@
+.header__container {
+  display: flex;
+  justify-content: space-between;
+  padding: 46px 0 40px;
+}
+
+@media screen and (max-width: 900px) {
+  .header__container {
+    padding-inline: 30px;
+  }
+}
+
+@media screen and (max-width: 620px) {
+  .header__container {
+    border-top: 1px solid rgba(84, 84, 84, .7);
+    padding-block: 28px 32px;
+  }
+}

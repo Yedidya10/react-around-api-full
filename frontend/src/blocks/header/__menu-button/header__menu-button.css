@@ -1,0 +1,17 @@
+.header__menu-button {
+  background: transparent;
+  border: none;
+  display: none;
+  cursor: pointer;
+  transition: opacity .3s ease-in-out;
+}
+
+.header__menu-button:hover {
+  opacity: .6;
+}
+
+@media screen and (max-width: 620px) {
+  .header__menu-button {
+    display: block;
+  }
+}
