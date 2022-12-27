@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const helmet = require('helmet');
 const dotenv = require('dotenv');
 const { celebrate, Joi, errors } = require('celebrate');
 const errorHandlers = require('./middlewares/errorHandlers');
@@ -30,7 +29,6 @@ db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
 // Routes
-// app.use(helmet());
 app.use(express.json());
 
 app.get('/crash-test', () => {
