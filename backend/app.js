@@ -30,7 +30,7 @@ db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
 // Routes
-app.use(helmet());
+// app.use(helmet());
 app.use(express.json());
 
 app.get('/crash-test', () => {
