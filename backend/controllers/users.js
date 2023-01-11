@@ -63,13 +63,7 @@ const getUsers = async (req, res) => {
 };
 
 const postUser = async (req, res, next) => {
-  const {
-    username,
-    about,
-    avatar,
-    email,
-    password,
-  } = req.body;
+  const { username, about, avatar, email, password } = req.body;
   try {
     const userEmail = await User.findOne({ email });
     if (userEmail) {
