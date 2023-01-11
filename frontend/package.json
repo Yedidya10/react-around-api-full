@@ -15,7 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "npm run build && scp -r ./build/* yedidya.abergel@yedidya.students.nomoredomainssbs.ru:/home/yedidya.abergel/react-around/frontend",
+    "deploy": "npm run build && scp -r ./build/* yedidya.abergel@34.125.103.94:/home/yedidya_abergel/frontend",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
