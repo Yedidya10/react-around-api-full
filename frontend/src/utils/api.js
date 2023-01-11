@@ -79,9 +79,9 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: `https://api.yedidya.students.nomoredomainssbs.ru`,
+  baseUrl: `http://localhost:8080`,
   headers: {
-    authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
     'Content-Type': 'application/json',
   },
 });
