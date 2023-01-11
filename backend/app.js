@@ -58,7 +58,7 @@ app.use(errors());
 app.use(errorHandlers);
 
 // PORT
-const { PORT = 8080 } = process.env;
+const { PORT = 3000 } = process.env;
 app.listen(PORT, (err) => {
   if (err) {
     return console.log(err);
