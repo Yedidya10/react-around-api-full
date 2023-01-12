@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.yedidya.students.nomoredomainssbs.ru';
+const BASE_URL = 'https://api.yedidya-ab.students.nomoredomainssbs.ru';
 
 const customFetch = (url, headers) => {
   return fetch(url, headers).then((res) =>
