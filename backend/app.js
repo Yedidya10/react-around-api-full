@@ -26,7 +26,7 @@ const {
 } = require('./utils/errorCodes');
 
 // Server
-mongoose.connect('mongodb://localhost:27017/aroundb');
+mongoose.connect(process.env.MONGODB_CONNECTION);
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
