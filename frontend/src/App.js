@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
-import ImagePopup from './ImagePopup';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import api from '../utils/api.js';
-import EditProfilePopup from './EditProfilePopup';
-import EditAvatarPopup from './EditAvatarPopup';
-import AddPlacePopup from './AddPlacePopup';
-import DeletePopup from './DeletePopup';
+import Header from './components/Header';
+import Main from './components/Main';
+import Footer from './components/Footer';
+import ImagePopup from './components/ImagePopup';
+import { CurrentUserContext } from './contexts/CurrentUserContext';
+import api from './utils/api.js';
+import EditProfilePopup from './components/EditProfilePopup';
+import EditAvatarPopup from './components/EditAvatarPopup';
+import AddPlacePopup from './components/AddPlacePopup';
+import DeletePopup from './components/DeletePopup';
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
-import Login from './Login';
-import Register from './Register';
-import ProtectedRoute from './ProtectedRoute';
-import InfoTooltip from './InfoTooltip';
-import * as auth from '../utils/auth';
+import Login from './components/Login';
+import Register from './components/Register';
+import ProtectedRoute from './components/ProtectedRoute';
+import InfoTooltip from './components/InfoTooltip';
+import * as auth from './utils/auth';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -122,8 +122,8 @@ function App() {
       .then((newCard) => {
         setCards((cards) =>
           cards.map((currentCard) =>
-            currentCard._id === card._id ? newCard : currentCard
-          )
+            currentCard._id === card._id ? newCard : currentCard,
+          ),
         );
       })
       .catch((err) => console.log(err));
@@ -136,7 +136,7 @@ function App() {
       .deleteCard(selectedCard._id)
       .then(() => {
         setCards((state) =>
-          state.filter((currentCard) => currentCard._id !== selectedCard._id)
+          state.filter((currentCard) => currentCard._id !== selectedCard._id),
         );
         closeAllPopups();
       })
