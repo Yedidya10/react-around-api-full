@@ -19,6 +19,7 @@ const Register = ({ handleRegister, isLoading }) => {
           <input
             type="email"
             name="email"
+            autoComplete="email"
             className="auth-form__input"
             placeholder="Email"
             value={values.email || ''}
@@ -27,9 +28,10 @@ const Register = ({ handleRegister, isLoading }) => {
           <input
             type="password"
             name="password"
+            autoComplete="new-password"
             className="auth-form__input"
             placeholder="Password"
-            value={values.password || ''}
+            value={''}
             onChange={handleChange}
           />
         </div>

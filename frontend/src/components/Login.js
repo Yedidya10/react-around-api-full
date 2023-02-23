@@ -19,6 +19,7 @@ const Login = ({ handleLogin, isLoading }) => {
           <input
             type="email"
             name="email"
+            autoComplete="email"
             className="auth-form__input"
             placeholder="Email"
             value={values.email || ''}
@@ -27,6 +28,7 @@ const Login = ({ handleLogin, isLoading }) => {
           <input
             type="password"
             name="password"
+            autoComplete="current-password"
             className="auth-form__input"
             placeholder="Password"
             value={values.password || ''}
