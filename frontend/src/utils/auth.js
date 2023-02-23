@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.yedidya-ab.students.nomoredomainssbs.ru';
+const BASE_URL = 'http://localhost:3000';
 
 const customFetch = (url, headers) => {
   return fetch(url, headers).then((res) =>

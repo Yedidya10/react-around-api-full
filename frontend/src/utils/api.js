@@ -72,16 +72,16 @@ class Api {
 
   updateToken = () => {
     this.headers = {
-      authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
       'Content-Type': 'application/json',
     };
   };
 }
 
 const api = new Api({
-  baseUrl: `https://api.yedidya-ab.students.nomoredomainssbs.ru`,
+  baseUrl: `http://localhost:3000`,
   headers: {
-    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+    Authorization: `Bearer ${localStorage.getItem('jwt')}`,
     'Content-Type': 'application/json',
   },
 });
