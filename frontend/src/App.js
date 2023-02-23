@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
@@ -42,24 +43,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((user) => {
-        setCurrentUser(user);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    api
-      .getInitialCards()
-      .then((res) => {
-        setCards(res);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
       setIsLoading(true);
@@ -69,7 +52,7 @@ function App() {
           if (res.data._id) {
             setLoggedIn(true);
             setUserData({ email: res.data.email });
-            history.push('/react-around-auth');
+            history.push('/');
           }
         })
         .catch((err) => {
@@ -78,11 +61,25 @@ function App() {
         })
         .finally(() => setIsLoading(false));
     }
-  }, [history]);
+  }, []);
 
-  const handleEditAvatarClick = () => {
-    setIsEditAvatarPopupOpen(true);
-  };
+  useEffect(() => {
+    if (loggedIn) {
+      api
+        .getInitialCards()
+        .then((cards) => {
+          setCards(cards);
+        })
+        .catch((err) => console.log(err));
+
+      api
+        .getUserInfo()
+        .then((user) => {
+          setCurrentUser(user);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [loggedIn]);
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -212,7 +209,7 @@ function App() {
           setLoggedIn(true);
           setUserData({ email });
           localStorage.setItem('jwt', res.token);
-          history.push('/react-around-auth');
+          history.push('/');
         }
       })
       .catch((err) => {
@@ -237,11 +234,11 @@ function App() {
         handleSignout={handleSignout}
       />
       <Switch>
-        <ProtectedRoute exact path="/react-around-auth" loggedIn={loggedIn}>
+        <ProtectedRoute exact path="/" loggedIn={loggedIn}>
           <Main
             onEditProfileClick={handleEditProfileClick}
             onAddPlaceClick={handleAddPlaceClick}
-            onEditAvatarClick={handleEditAvatarClick}
+            // onEditAvatarClick={handleEditAvatarClick}
             cards={cards}
             onCardClick={handleCardClick}
             onCardLike={handleCardLike}
@@ -259,7 +256,7 @@ function App() {
 
         <Route>
           {loggedIn ? (
-            <Redirect to="/react-around-auth" />
+            <Redirect to="/" />
           ) : (
             <Redirect to="/signin" />
           )}
