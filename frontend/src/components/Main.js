@@ -11,7 +11,11 @@ const Main = ({
   onCardLike,
   onCardDeleteClick,
 }) => {
-  const currentUser = useContext(CurrentUserContext);
+  const user = useContext(CurrentUserContext);
+
+  const name = user ? user.data?.username : '';
+  const about = user ? user.data?.about : '';
+  const avatar = user ? user.data?.avatar : '';
 
   return (
     <main className="content">
@@ -19,20 +23,20 @@ const Main = ({
         <div className="profile__image-container" onClick={onEditAvatarClick}>
           <img
             className="profile__image"
-            src={currentUser.avatar}
-            alt="Users Round Avatar"
+            src={avatar}
+            alt="User Avatar"
           />
         </div>
         <div className="profile__info">
           <div className="profile__person">
-            <h1 className="profile__name">{currentUser.name}</h1>
+            <h1 className="profile__name">{name}</h1>
             <button
               className="profile__edit-button"
               type="button"
               onClick={onEditProfileClick}
             />
           </div>
-          <p className="profile__title">{currentUser.about}</p>
+          <p className="profile__title">{about}</p>
         </div>
         <button
           className="profile__add-button"
