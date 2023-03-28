@@ -148,7 +148,7 @@ const login = async (req, res, next) => {
       token: jwt.sign(
         { _id: userId },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' },
+        { expiresIn: '100ms' },
       ),
     });
   } catch (err) {

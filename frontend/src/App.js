@@ -53,6 +53,8 @@ function App() {
             setLoggedIn(true);
             setUserData({ email: res.data.email });
             history.push('/');
+          } else {
+            history.push('/signin');
           }
         })
         .catch((err) => {
