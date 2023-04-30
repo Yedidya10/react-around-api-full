@@ -33,11 +33,11 @@ db.once('open', () => console.log('Connected to Database'));
 // Routes
 app.use(express.json());
 
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Server will crash now');
-  }, 0);
-});
+// app.get('/crash-test', () => {
+//   setTimeout(() => {
+//     throw new Error('Server will crash now');
+//   }, 0);
+// });
 
 app.use('/signin', signin);
 app.use('/signup', signup);

@@ -10,10 +10,9 @@ import EditProfilePopup from './components/EditProfilePopup';
 import EditAvatarPopup from './components/EditAvatarPopup';
 import AddPlacePopup from './components/AddPlacePopup';
 import DeletePopup from './components/DeletePopup';
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
-import ProtectedRoute from './components/ProtectedRoute';
 import InfoTooltip from './components/InfoTooltip';
 import * as auth from './utils/auth';
 
@@ -34,54 +33,42 @@ function App() {
   });
 
   const [currentUser, setCurrentUser] = useState({});
-  const [userData, setUserData] = useState({
-    email: '',
-  });
-  const [loggedIn, setLoggedIn] = useState(false);
-  const history = useHistory();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    navigate('/signin');
+
     const jwt = localStorage.getItem('jwt');
+
     if (jwt) {
-      setIsLoading(true);
+      setIsLoggedIn(true);
+      navigate('/');
+
       auth
-        .checkToken(jwt)
+        .getUserToken(jwt)
         .then((res) => {
           if (res.data._id) {
-            setLoggedIn(true);
-            setUserData({ email: res.data.email });
-            history.push('/');
-          } else {
-            history.push('/signin');
+            setIsLoggedIn(true);
+            setCurrentUser(res.data);
           }
         })
-        .catch((err) => {
-          console.log(err);
-          history.push('/signin');
-        })
-        .finally(() => setIsLoading(false));
+        .catch((err) => console.log(err));
     }
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
-    if (loggedIn) {
+    if (isLoggedIn) {
       api
         .getInitialCards()
         .then((cards) => {
           setCards(cards);
         })
         .catch((err) => console.log(err));
-
-      api
-        .getUserInfo()
-        .then((user) => {
-          setCurrentUser(user);
-        })
-        .catch((err) => console.log(err));
     }
-  }, [loggedIn]);
+  }, [isLoggedIn]);
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -89,6 +76,10 @@ function App() {
 
   const handleAddPlaceClick = () => {
     setIsAddPlacePopupOpen(true);
+  };
+
+  const handleEditAvatarClick = () => {
+    setIsEditAvatarPopupOpen(true);
   };
 
   const closeAllPopups = () => {
@@ -110,15 +101,17 @@ function App() {
 
   const handleCardDeleteClick = (card) => {
     setIsDeletePopupOpen(true);
+    console.log(card);
     setSelectedCard(card);
   };
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some((user) => user._id === currentUser._id);
+    const isLiked = card.likes.some((userId) => userId === currentUser._id);
 
     api
       .toggleLike(card._id, isLiked)
       .then((newCard) => {
+        console.log('Hello');
         setCards((cards) =>
           cards.map((currentCard) =>
             currentCard._id === card._id ? newCard : currentCard,
@@ -160,6 +153,7 @@ function App() {
     api
       .setUserAvatar(url)
       .then((res) => {
+        console.log(res);
         setCurrentUser(res);
         closeAllPopups();
       })
@@ -184,10 +178,10 @@ function App() {
     auth
       .register(email, password)
       .then((res) => {
-        if (res.data._id) {
+        if (res) {
           setInfoTooltipType('successful');
           setIsInfoTooltipOpen(true);
-          history.push('/signin');
+          navigate('/signin');
         } else {
           setInfoTooltipType('failed');
         }
@@ -207,11 +201,10 @@ function App() {
     auth
       .login(email, password)
       .then((res) => {
-        if (res.token) {
-          setLoggedIn(true);
-          setUserData({ email });
+        if (email, password, res.token) {
+          setIsLoggedIn(true);
           localStorage.setItem('jwt', res.token);
-          history.push('/');
+          navigate('/');
         }
       })
       .catch((err) => {
@@ -222,50 +215,43 @@ function App() {
       .finally(() => setIsLoading(false));
   }
 
-  function handleSignout() {
-    setLoggedIn(false);
+  function handleSignOut() {
+    setIsLoggedIn(false);
     localStorage.removeItem('jwt');
-    history.push('/signin');
+    navigate('/signin');
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header
-        loggedIn={loggedIn}
-        email={userData.email}
-        handleSignout={handleSignout}
+        email={currentUser.email}
+        isLoggedIn={isLoggedIn}
+        handleSignOut={handleSignOut}
       />
-      <Switch>
-        <ProtectedRoute exact path="/" loggedIn={loggedIn}>
-          <Main
-            onEditProfileClick={handleEditProfileClick}
-            onAddPlaceClick={handleAddPlaceClick}
-            // onEditAvatarClick={handleEditAvatarClick}
-            cards={cards}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDeleteClick={handleCardDeleteClick}
-          />
-        </ProtectedRoute>
-
-        <Route path="/signup">
-          <Register handleRegister={handleRegister} isLoading={isLoading} />
-        </Route>
-
-        <Route path="/signin">
-          <Login handleLogin={handleLogin} isLoading={isLoading} />
-        </Route>
-
-        <Route>
-          {loggedIn ? (
-            <Redirect to="/" />
-          ) : (
-            <Redirect to="/signin" />
-          )}
-        </Route>
-      </Switch>
-      {loggedIn && <Footer />}
-
+      {isLoggedIn ? (
+        <>
+          <Routes>
+            <Route exact path="/" element={<Main
+              onEditProfileClick={handleEditProfileClick}
+              onAddPlaceClick={handleAddPlaceClick}
+              onEditAvatarClick={handleEditAvatarClick}
+              cards={cards}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDeleteClick={handleCardDeleteClick}
+            />}>
+            </Route>
+          </Routes>
+        </>
+      ) : (
+        <>
+          <Routes>
+            <Route path="/signup" element={<Register handleRegister={handleRegister} isLoading={isLoading} />} />
+            <Route path="/signin" element={<Login handleLogin={handleLogin} isLoading={isLoading} />} />
+          </Routes>
+        </>
+      )}
+      <Footer />
       <EditProfilePopup
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
@@ -307,7 +293,7 @@ function App() {
         type={infoTooltipType}
         name="tooltip"
       />
-    </CurrentUserContext.Provider>
+    </CurrentUserContext.Provider >
   );
 }
 

@@ -12,10 +12,9 @@ const Main = ({
   onCardDeleteClick,
 }) => {
   const user = useContext(CurrentUserContext);
-
-  const name = user ? user.data?.username : '';
-  const about = user ? user.data?.about : '';
-  const avatar = user ? user.data?.avatar : '';
+  const name = user ? user.username : null;
+  const about = user ? user.about : null;
+  const avatar = user ? user.avatar : null;
 
   return (
     <main className="content">

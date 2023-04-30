@@ -30,7 +30,7 @@ class Api {
       headers: this._headers,
       method: 'PATCH',
       body: JSON.stringify({
-        name: name,
+        username: name,
         about: about,
       }),
     });
@@ -64,6 +64,7 @@ class Api {
   toggleLike(cardId, isLiked) {
     let method;
     isLiked ? (method = 'DELETE') : (method = 'PUT');
+    
     return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
       headers: this._headers,
       method: method,

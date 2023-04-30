@@ -28,7 +28,7 @@ export const login = (email, password) => {
   });
 };
 
-export const checkToken = (token) => {
+export const getUserToken = (token) => {
   return customFetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     headers: {

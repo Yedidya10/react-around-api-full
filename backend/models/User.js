@@ -26,12 +26,6 @@ const User = new mongoose.Schema({
   },
   password: {
     type: String,
-    // validate: {
-    //   validator(v) {
-    //     return /^([A-Za-z0-9#$!@&%]{8,})$/gm.test(v);
-    //   },
-    //   message: (props) => `${props.value} is not a valid password!`,
-    // },
     required: [true, 'Password are required'],
     select: false,
   },

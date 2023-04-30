@@ -31,7 +31,7 @@ const Register = ({ handleRegister, isLoading }) => {
             autoComplete="new-password"
             className="auth-form__input"
             placeholder="Password"
-            value={''}
+            value={values.password || ''}
             onChange={handleChange}
           />
         </div>
