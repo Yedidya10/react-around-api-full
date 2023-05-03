@@ -48,8 +48,8 @@ const Main = ({
           {cards.map((card) => {
             return (
               <Card
-                card={card}
                 key={card._id}
+                card={card}
                 onCardClick={onCardClick}
                 onCardLike={onCardLike}
                 onCardDelete={onCardDeleteClick}

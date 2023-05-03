@@ -1,14 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 import { Menu } from './Menu.js';
 import logo from '../images/logo.svg';
 import menuIcon from '../images/icons/menu_icon.svg';
 import closeIcon from '../images/icons/close_icon.svg';
-
-
 
 
 const Header = ({ isLoggedIn, email, handleSignOut }) => {

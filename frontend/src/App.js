@@ -10,7 +10,7 @@ import EditProfilePopup from './components/EditProfilePopup';
 import EditAvatarPopup from './components/EditAvatarPopup';
 import AddPlacePopup from './components/AddPlacePopup';
 import DeletePopup from './components/DeletePopup';
-import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import InfoTooltip from './components/InfoTooltip';
@@ -56,11 +56,7 @@ function App() {
           }
         })
         .catch((err) => console.log(err));
-    }
-  }, [isLoggedIn]);
 
-  useEffect(() => {
-    if (isLoggedIn) {
       api
         .getInitialCards()
         .then((cards) => {
@@ -68,7 +64,7 @@ function App() {
         })
         .catch((err) => console.log(err));
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -106,16 +102,16 @@ function App() {
   };
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some((userId) => userId === currentUser._id);
+    const isLiked = card.likes?.some((userId) => userId === currentUser._id);
 
     api
       .toggleLike(card._id, isLiked)
-      .then((newCard) => {
-        console.log('Hello');
-        setCards((cards) =>
-          cards.map((currentCard) =>
-            currentCard._id === card._id ? newCard : currentCard,
-          ),
+      .then((updatedCard) => {
+        setCards(
+          (cards) =>
+            cards.map((eachCard) =>
+              eachCard._id === card._id ? updatedCard : eachCard,
+            ),
         );
       })
       .catch((err) => console.log(err));
@@ -201,7 +197,7 @@ function App() {
     auth
       .login(email, password)
       .then((res) => {
-        if (email, password, res.token) {
+        if (res.token) {
           setIsLoggedIn(true);
           localStorage.setItem('jwt', res.token);
           navigate('/');

@@ -2,11 +2,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const User = require('../models/User');
-const {
-  BAD_REQUEST_ERROR_CODE,
-  NOT_FOUND_ERROR_CODE,
-  SERVER_ERROR_CODE,
-} = require('../utils/errorCodes');
+const BadRequestError = require('../utils/ErrorHandlers/BadRequestError');
+const NotFoundError = require('../utils/ErrorHandlers/NotFoundError');
+const ServerError = require('../utils/ErrorHandlers/ServerError');
+const UnauthorizedError = require('../utils/ErrorHandlers/ForbiddenError');
 
 dotenv.config();
 const { NODE_ENV, JWT_SECRET } = process.env;
@@ -19,13 +18,13 @@ const getUserInfo = async (req, res) => {
     if (user) {
       res.send({ data: user });
     } else {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'user not found!' });
+      throw new NotFoundError('User not found');
     }
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid user');
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -34,14 +33,14 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (user == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'user not found!' });
+      throw new NotFoundError('User not found');
     }
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid user');
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -50,14 +49,14 @@ const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
     if (users == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'users not found!' });
+      throw new NotFoundError('Users not found');
     }
     res.status(200).send(users);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid user');
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -83,15 +82,15 @@ const postUser = async (req, res, next) => {
       });
       return res.status(201).send(user);
     } catch (err) {
-      return next(err);
+      return next(new ServerError(err.message));
     }
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      next(new BadRequestError('Invalid user'));
     } else if (err.name === 'ValidationError') {
-      return res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      next(new BadRequestError('Invalid data'));
     } else {
-      return res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      next(new ServerError('Internal server error'));
     }
     return next(err);
   }
@@ -104,16 +103,16 @@ const patchUserProfile = async (req, res) => {
       runValidators: true,
     });
     if (user == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'user not found!' });
+      throw new NotFoundError('User not found');
     }
     res.status(201).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid user');
     } else if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid data');
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -125,16 +124,16 @@ const patchUserAvatar = async (req, res) => {
       runValidators: true,
     });
     if (user == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'user not found!' });
+      throw new NotFoundError('User not found');
     }
     res.status(201).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid user');
     } else if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError('Invalid data');
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -148,11 +147,11 @@ const login = async (req, res, next) => {
       token: jwt.sign(
         { _id: userId },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' }
+        { expiresIn: '7d' },
       ),
     });
   } catch (err) {
-    next(new Error('Invalid email or password'));
+    next(new UnauthorizedError('Incorrect email or password'));
   }
 };
 

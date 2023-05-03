@@ -1,22 +1,28 @@
 const Card = require('../models/Card');
-const {
-  BAD_REQUEST_ERROR_CODE,
-  NOT_FOUND_ERROR_CODE,
-  SERVER_ERROR_CODE,
-} = require('../utils/errorCodes');
+const BadRequestError = require('../utils/ErrorHandlers/BadRequestError');
+const ForbiddenError = require('../utils/ErrorHandlers/ForbiddenError');
+const NotFoundError = require('../utils/ErrorHandlers/NotFoundError');
+const ServerError = require('../utils/ErrorHandlers/ServerError');
 
 const deleteCard = async (req, res) => {
   try {
-    const card = await Card.findByIdAndRemove(req.params.cardId);
+    const card = await Card.findById(req.params.cardId);
+    const userId = req.user._id;
+    const isOwner = card.owner.toString() === userId;
+
     if (card == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'card not found!' });
+      throw new NotFoundError('Card not found');
     }
+    if (!isOwner) {
+      throw new ForbiddenError('Forbidden');
+    }
+    await Card.findByIdAndDelete(req.params.cardId);
     res.status(200).send({ succeed: 'Card is deleted' });
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError(err.message);
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -31,16 +37,16 @@ const deleteCardLike = async (req, res) => {
       { new: true },
     );
     if (card == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'card not found!' });
+      throw new NotFoundError('Card not found');
     }
     res
       .status(200)
       .send({ succeed: `user id ${req.user._id} like was deleted` });
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError(err.message);
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -50,7 +56,7 @@ const getCards = async (req, res) => {
     const cards = await Card.find({});
     res.status(200).send(cards);
   } catch (err) {
-    res.status(SERVER_ERROR_CODE).send({ message: err.message });
+    throw new ServerError(err.message);
   }
 };
 
@@ -66,11 +72,9 @@ const postCard = async (req, res) => {
     res.status(201).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      res
-        .status(BAD_REQUEST_ERROR_CODE)
-        .send({ message: `${err.name} - ${err.message}` });
+      throw new BadRequestError(err.message);
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
@@ -85,16 +89,16 @@ const putCardLike = async (req, res) => {
       { new: true },
     );
     if (card == null) {
-      res.status(NOT_FOUND_ERROR_CODE).send({ message: 'card not found!' });
+      throw new NotFoundError('Card not found');
     }
     res.status(201).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError(err.message);
     } else if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR_CODE).send({ message: err.message });
+      throw new BadRequestError(err.message);
     } else {
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      throw new ServerError('Internal server error');
     }
   }
 };
