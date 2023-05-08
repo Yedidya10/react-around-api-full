@@ -15,7 +15,7 @@ const Main = ({
   const name = user ? user.username : null;
   const about = user ? user.about : null;
   const avatar = user ? user.avatar : null;
-
+  
   return (
     <main className="content">
       <section className="profile">

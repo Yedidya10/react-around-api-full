@@ -61,13 +61,16 @@ class Api {
     });
   }
 
-  toggleLike(cardId, isLiked) {
+  toggleLike(cardId, currentUserId, isLiked) {
     let method;
     isLiked ? (method = 'DELETE') : (method = 'PUT');
-    
+
     return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
       headers: this._headers,
       method: method,
+      body: JSON.stringify({
+        userId: currentUserId,
+      }),
     });
   }
 

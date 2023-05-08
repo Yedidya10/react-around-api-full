@@ -27,30 +27,6 @@ const deleteCard = async (req, res) => {
   }
 };
 
-const deleteCardLike = async (req, res) => {
-  try {
-    const card = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      {
-        $pull: { likes: req.user._id },
-      },
-      { new: true },
-    );
-    if (card == null) {
-      throw new NotFoundError('Card not found');
-    }
-    res
-      .status(200)
-      .send({ succeed: `user id ${req.user._id} like was deleted` });
-  } catch (err) {
-    if (err.name === 'CastError') {
-      throw new BadRequestError(err.message);
-    } else {
-      throw new ServerError('Internal server error');
-    }
-  }
-};
-
 const getCards = async (req, res) => {
   try {
     const cards = await Card.find({});
@@ -81,21 +57,47 @@ const postCard = async (req, res) => {
 
 const putCardLike = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       {
-        $addToSet: { likes: req.user._id },
+        $addToSet: { likes: userId },
       },
       { new: true },
     );
     if (card == null) {
       throw new NotFoundError('Card not found');
     }
-    res.status(201).send(card);
+    res.status(201).send({ succeed: `user id ${req.user._id} like was added`, card });
   } catch (err) {
     if (err.name === 'CastError') {
       throw new BadRequestError(err.message);
     } else if (err.name === 'ValidationError') {
+      throw new BadRequestError(err.message);
+    } else {
+      throw new ServerError('Internal server error');
+    }
+  }
+};
+
+const deleteCardLike = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      {
+        $pull: { likes: userId },
+      },
+      { new: true },
+    );
+    if (card == null) {
+      throw new NotFoundError('Card not found');
+    }
+    res
+      .status(200)
+      .send({ succeed: `user id ${req.user._id} like was deleted`, card });
+  } catch (err) {
+    if (err.name === 'CastError') {
       throw new BadRequestError(err.message);
     } else {
       throw new ServerError('Internal server error');

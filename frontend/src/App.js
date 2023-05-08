@@ -97,20 +97,20 @@ function App() {
 
   const handleCardDeleteClick = (card) => {
     setIsDeletePopupOpen(true);
-    console.log(card);
     setSelectedCard(card);
   };
 
   function handleCardLike(card) {
+    console.log(card);
     const isLiked = card.likes?.some((userId) => userId === currentUser._id);
-
+    console.log( currentUser );
+    
     api
-      .toggleLike(card._id, isLiked)
+      .toggleLike(card._id, currentUser._id, isLiked)
       .then((updatedCard) => {
         setCards(
           (cards) =>
-            cards.map((eachCard) =>
-              eachCard._id === card._id ? updatedCard : eachCard,
+            cards.map((eachCard) => eachCard._id === card._id ? updatedCard.card : eachCard
             ),
         );
       })
@@ -215,6 +215,13 @@ function App() {
     setIsLoggedIn(false);
     localStorage.removeItem('jwt');
     navigate('/signin');
+   
+    setCurrentUser({ 
+      name: '',
+      about: '',
+      avatar: '',
+      email: '',
+    });
   }
 
   return (
