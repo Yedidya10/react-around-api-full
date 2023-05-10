@@ -9,7 +9,7 @@ const EditProfilePopup = ({ isOpen, onClose, onUpdateUser, isLoading }) => {
   const { values, handleChange, setValues } = useForm({});
 
   useEffect(() => {
-    setValues({ name: currentUser.username, about: currentUser.about });
+    setValues({ name: currentUser.name, about: currentUser.about });
   }, [currentUser, isOpen]);
 
   function handleSubmit(e) {

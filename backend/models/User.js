@@ -3,13 +3,13 @@ const bcrypt = require('bcrypt');
 const validator = require('validator');
 
 const User = new mongoose.Schema({
-  username: {
+  name: {
     type: String,
     validate: {
       validator(v) {
         return /^([A-Za-z0-9 ,.'"`-]{2,30})$/gm.test(v);
       },
-      message: (props) => `${props.value} is not a valid username!`,
+      message: (props) => `${props.value} is not a valid name!`,
     },
     default: 'Jacques Cousteau',
   },

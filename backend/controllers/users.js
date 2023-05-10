@@ -63,17 +63,17 @@ const getUsers = async (req, res, next) => {
 };
 
 const postUser = async (req, res, next) => {
-  const { username, about, avatar, email, password } = req.body;
+  const { name, about, avatar, email, password } = req.body;
   try {
     const userEmail = await User.findOne({ email });
     if (userEmail) {
-      return  next(new ConflictError(`User with email ${email} already exists`));
+      return next(new ConflictError(`User with email ${email} already exists`));
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await User.create({
-      username,
+      name,
       about,
       avatar,
       email,
@@ -81,14 +81,14 @@ const postUser = async (req, res, next) => {
     });
     return res.status(201).send(user);
   } catch (err) {
-  if (err.name === 'CastError') {
-    return  next(new BadRequestError('Invalid user'));
-  } else if (err.name === 'ValidationError') {
-    return  next(new BadRequestError('Invalid data'));
-  } else {
-    return  next(new ServerError('Internal server error'));
+    if (err.name === 'CastError') {
+      return next(new BadRequestError('Invalid user'));
+    } else if (err.name === 'ValidationError') {
+      return next(new BadRequestError('Invalid data'));
+    } else {
+      return next(new ServerError('Internal server error'));
+    }
   }
-}
 };
 
 const patchUserProfile = async (req, res, next) => {

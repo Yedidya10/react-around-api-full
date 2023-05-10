@@ -30,7 +30,7 @@ class Api {
       headers: this._headers,
       method: 'PATCH',
       body: JSON.stringify({
-        username: name,
+        name: name,
         about: about,
       }),
     });

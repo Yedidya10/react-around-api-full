@@ -21,7 +21,6 @@ dotenv.config();
 
 const {
   NOT_FOUND_ERROR_CODE,
-  // UNAUTHORIZED_ERROR_CODE,
   SERVER_ERROR_CODE,
 } = require('./utils/errorCodes');
 
@@ -44,7 +43,7 @@ app.use('/signup', signup);
 app.use('/users', auth, users);
 app.use('/cards', auth, cards);
 
-app.use('/', (req, res) => {
+app.use('/', (req, res, next) => {
   res.status(NOT_FOUND_ERROR_CODE).send(notFoundMessage);
 });
 app.get('*', () => {
