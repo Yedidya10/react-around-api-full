@@ -6,13 +6,14 @@ const BadRequestError = require('../utils/ErrorHandlers/BadRequestError');
 const NotFoundError = require('../utils/ErrorHandlers/NotFoundError');
 const ServerError = require('../utils/ErrorHandlers/ServerError');
 const UnauthorizedError = require('../utils/ErrorHandlers/ForbiddenError');
+import ConflictError from '../utils/ErrorHandlers/ConflictError';
 
 dotenv.config();
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 let userId;
 
-const getUserInfo = async (req, res) => {
+const getUserInfo = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (user) {
@@ -22,14 +23,14 @@ const getUserInfo = async (req, res) => {
     }
   } catch (err) {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Invalid user');
+      return next(new BadRequestError('Invalid user'));
     } else {
-      throw new ServerError('Internal server error');
+      return next(new ServerError('Internal server error'));
     }
   }
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
     if (user == null) {
@@ -38,25 +39,25 @@ const getUserById = async (req, res) => {
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Invalid user');
+      return next(new BadRequestError('Invalid user'));
     } else {
-      throw new ServerError('Internal server error');
+      return next(new ServerError('Internal server error'));
     }
   }
 };
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     if (users == null) {
-      throw new NotFoundError('Users not found');
+      return next(new NotFoundError('Users not found'));
     }
     res.status(200).send(users);
   } catch (err) {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Invalid user');
+      return next(new BadRequestError('Invalid user'));
     } else {
-      throw new ServerError('Internal server error');
+      return next(new ServerError('Internal server error'));
     }
   }
 };
@@ -66,74 +67,68 @@ const postUser = async (req, res, next) => {
   try {
     const userEmail = await User.findOne({ email });
     if (userEmail) {
-      return res
-        .status(200)
-        .send({ message: `User with email ${email} already exists` });
+      return  next(new ConflictError(`User with email ${email} already exists`));
     }
-    try {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      const user = await User.create({
-        username,
-        about,
-        avatar,
-        email,
-        password: hashedPassword,
-      });
-      return res.status(201).send(user);
-    } catch (err) {
-      return next(new ServerError(err.message));
-    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const user = await User.create({
+      username,
+      about,
+      avatar,
+      email,
+      password: hashedPassword,
+    });
+    return res.status(201).send(user);
   } catch (err) {
-    if (err.name === 'CastError') {
-      next(new BadRequestError('Invalid user'));
-    } else if (err.name === 'ValidationError') {
-      next(new BadRequestError('Invalid data'));
-    } else {
-      next(new ServerError('Internal server error'));
-    }
-    return next(err);
+  if (err.name === 'CastError') {
+    return  next(new BadRequestError('Invalid user'));
+  } else if (err.name === 'ValidationError') {
+    return  next(new BadRequestError('Invalid data'));
+  } else {
+    return  next(new ServerError('Internal server error'));
   }
+}
 };
 
-const patchUserProfile = async (req, res) => {
+const patchUserProfile = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
       runValidators: true,
     });
     if (user == null) {
-      throw new NotFoundError('User not found');
+      return next(new NotFoundError('User not found'));
     }
     res.status(201).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Invalid user');
+      return next(new BadRequestError('Invalid user'));
     } else if (err.name === 'ValidationError') {
-      throw new BadRequestError('Invalid data');
+      return next(new BadRequestError('Invalid data'));
     } else {
-      throw new ServerError('Internal server error');
+      return next(new ServerError('Internal server error'));
     }
   }
 };
 
-const patchUserAvatar = async (req, res) => {
+const patchUserAvatar = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
       runValidators: true,
     });
     if (user == null) {
-      throw new NotFoundError('User not found');
+      return next(new NotFoundError('User not found'));
     }
     res.status(201).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Invalid user');
+      return next(new BadRequestError('Invalid user'));
     } else if (err.name === 'ValidationError') {
-      throw new BadRequestError('Invalid data');
+      return next(new BadRequestError('Invalid data'));
     } else {
-      throw new ServerError('Internal server error');
+      return next(new ServerError('Internal server error'));
     }
   }
 };
@@ -151,7 +146,7 @@ const login = async (req, res, next) => {
       ),
     });
   } catch (err) {
-    next(new UnauthorizedError('Incorrect email or password'));
+    return next(new UnauthorizedError('Incorrect email or password'));
   }
 };
 
