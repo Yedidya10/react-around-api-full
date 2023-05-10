@@ -6,7 +6,9 @@ const { errors } = require('celebrate');
 const errorHandlers = require('./middlewares/errorHandlers');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
+
 const notFoundMessage = require('./utils/notFound');
+const { NotFoundError } = require('./utils/ErrorHandlers/NotFoundError');
 
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -19,13 +21,9 @@ app.use(cors());
 const db = mongoose.connection;
 dotenv.config();
 
-const {
-  NOT_FOUND_ERROR_CODE,
-  SERVER_ERROR_CODE,
-} = require('./utils/errorCodes');
-
 // Server
-mongoose.connect(process.env.MONGODB_CONNECTION);
+const MONGODB_CONNECTION = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URL : 'mongodb://localhost:27017/mestodb';
+mongoose.connect(MONGODB_CONNECTION);
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
@@ -38,23 +36,18 @@ app.use(express.json());
 //   }, 0);
 // });
 
-app.use('/signin', signin);
-app.use('/signup', signup);
-app.use('/users', auth, users);
-app.use('/cards', auth, cards);
-
-app.use('/', (req, res, next) => {
-  res.status(NOT_FOUND_ERROR_CODE).send(notFoundMessage);
-});
-app.get('*', () => {
-  throw new Error(notFoundMessage);
-});
-app.use((err, req, res) => res.status(SERVER_ERROR_CODE).send({ error: err }));
-
 app.use(requestLogger);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandlers);
+
+app.use('/signin', signin);
+app.use('/signup', signup);
+app.use('/users', auth, users);
+app.use('/cards', auth, cards);
+app.use('/', (req, res, next) => {
+  return next(new NotFoundError(notFoundMessage));
+});
 
 // PORT
 const { PORT = 3000 } = process.env;

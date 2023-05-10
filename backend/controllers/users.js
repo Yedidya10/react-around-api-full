@@ -6,7 +6,7 @@ const BadRequestError = require('../utils/ErrorHandlers/BadRequestError');
 const NotFoundError = require('../utils/ErrorHandlers/NotFoundError');
 const ServerError = require('../utils/ErrorHandlers/ServerError');
 const UnauthorizedError = require('../utils/ErrorHandlers/ForbiddenError');
-import ConflictError from '../utils/ErrorHandlers/ConflictError';
+const ConflictError = require('../utils/ErrorHandlers/ConflictError');
 
 dotenv.config();
 const { NODE_ENV, JWT_SECRET } = process.env;
