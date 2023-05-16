@@ -39,11 +39,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    navigate('/signin');
-
     const jwt = localStorage.getItem('jwt');
 
     if (jwt) {
+      navigate('/signin');
       setIsLoggedIn(true);
       navigate('/');
 
@@ -60,7 +59,11 @@ function App() {
       api
         .getInitialCards()
         .then((cards) => {
-          setCards(cards);
+          if (cards === []) {
+            return
+          } else {
+            setCards(cards);
+          }
         })
         .catch((err) => console.log(err));
     }
@@ -101,10 +104,8 @@ function App() {
   };
 
   function handleCardLike(card) {
-    console.log(card);
     const isLiked = card.likes?.some((userId) => userId === currentUser._id);
-    console.log( currentUser );
-    
+
     api
       .toggleLike(card._id, currentUser._id, isLiked)
       .then((updatedCard) => {
@@ -149,7 +150,6 @@ function App() {
     api
       .setUserAvatar(url)
       .then((res) => {
-        console.log(res);
         setCurrentUser(res);
         closeAllPopups();
       })
@@ -171,6 +171,7 @@ function App() {
 
   function handleRegister({ email, password }) {
     setIsLoading(true);
+    console.log("res");
     auth
       .register(email, password)
       .then((res) => {

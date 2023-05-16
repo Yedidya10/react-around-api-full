@@ -8,11 +8,11 @@ const deleteCard = async (req, res, next) => {
   try {
     const card = await Card.findById(req.params.cardId);
     const userId = req.user._id;
-    const isOwner = card.owner.toString() === userId;
 
     if (card == null) {
       return next(new NotFoundError('Card not found'));
     }
+    const isOwner = card.owner.toString() === userId;
     if (!isOwner) {
       return next(new ForbiddenError('You can delete only your own cards'));
     }
@@ -51,7 +51,7 @@ const postCard = async (req, res, next) => {
     });
     res.status(201).send(card);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'ValidationError') {
       return next(new BadRequestError(err.message));
     } else {
       return next(new ServerError('Internal server error'));

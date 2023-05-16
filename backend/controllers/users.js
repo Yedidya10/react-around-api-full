@@ -25,7 +25,7 @@ const getUserInfo = async (req, res, next) => {
     if (err.name === 'CastError') {
       return next(new BadRequestError('Invalid user'));
     } else {
-      return next(new ServerError('Internal server error'));
+      return next(err);
     }
   }
 };
@@ -41,7 +41,7 @@ const getUserById = async (req, res, next) => {
     if (err.name === 'CastError') {
       return next(new BadRequestError('Invalid user'));
     } else {
-      return next(new ServerError('Internal server error'));
+      return next(err);
     }
   }
 };
@@ -79,7 +79,13 @@ const postUser = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-    return res.status(201).send(user);
+    console.log(user);
+    return res.status(201).send({
+      _id: user._id,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+    })
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new BadRequestError('Invalid user'));
@@ -121,7 +127,7 @@ const patchUserAvatar = async (req, res, next) => {
     if (user == null) {
       return next(new NotFoundError('User not found'));
     }
-    res.status(201).send(user);
+    res.status(201).send(user)
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new BadRequestError('Invalid user'));

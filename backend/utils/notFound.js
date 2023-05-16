@@ -1,5 +1,3 @@
-const notFoundMessage = {
-  'Message': 'Requested resource not found',
-};
+const notFoundMessage = 'Requested resource not found';
 
 module.exports = notFoundMessage;
