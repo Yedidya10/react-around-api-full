@@ -64,7 +64,7 @@ function App() {
         })
         .catch((err) => console.log(err));
     }
-  }, [navigate]);
+  }, [navigate, isLoggedIn]);
 
 
   const handleEditProfileClick = () => {
