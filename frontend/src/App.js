@@ -42,9 +42,7 @@ function App() {
     const jwt = localStorage.getItem('jwt');
 
     if (jwt) {
-      navigate('/signin');
       setIsLoggedIn(true);
-      navigate('/');
 
       auth
         .getUserToken(jwt)
@@ -52,6 +50,7 @@ function App() {
           if (res.data._id) {
             setIsLoggedIn(true);
             setCurrentUser(res.data);
+            navigate('/');
           }
         })
         .catch((err) => console.log(err));
@@ -59,17 +58,14 @@ function App() {
       api
         .getInitialCards()
         .then((cards) => {
-          if (cards === []) {
-            return
-          } else {
+          if (cards !== []) {
             setCards(cards);
           }
         })
         .catch((err) => console.log(err));
-    } else {
-      navigate('/signin');
     }
-  }, [isLoggedIn, navigate]);
+  }, [navigate]);
+
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -173,7 +169,6 @@ function App() {
 
   function handleRegister({ email, password }) {
     setIsLoading(true);
-    console.log("res");
     auth
       .register(email, password)
       .then((res) => {
@@ -218,8 +213,8 @@ function App() {
     setIsLoggedIn(false);
     localStorage.removeItem('jwt');
     navigate('/signin');
-   
-    setCurrentUser({ 
+
+    setCurrentUser({
       name: '',
       about: '',
       avatar: '',
@@ -234,29 +229,21 @@ function App() {
         isLoggedIn={isLoggedIn}
         handleSignOut={handleSignOut}
       />
-      {isLoggedIn ? (
-        <>
-          <Routes>
-            <Route exact path="/" element={<Main
-              onEditProfileClick={handleEditProfileClick}
-              onAddPlaceClick={handleAddPlaceClick}
-              onEditAvatarClick={handleEditAvatarClick}
-              cards={cards}
-              onCardClick={handleCardClick}
-              onCardLike={handleCardLike}
-              onCardDeleteClick={handleCardDeleteClick}
-            />}>
-            </Route>
-          </Routes>
-        </>
-      ) : (
-        <>
-          <Routes>
-            <Route path="/signup" element={<Register handleRegister={handleRegister} isLoading={isLoading} />} />
-            <Route path="/signin" element={<Login handleLogin={handleLogin} isLoading={isLoading} />} />
-          </Routes>
-        </>
-      )}
+      <Routes>
+        <Route path="/signup" element={<Register handleRegister={handleRegister} isLoading={isLoading} />} />
+        <Route path="/signin" element={<Login handleLogin={handleLogin} isLoading={isLoading} />} />
+        {isLoggedIn && (
+          <Route exact path="/" element={<Main
+            onEditProfileClick={handleEditProfileClick}
+            onAddPlaceClick={handleAddPlaceClick}
+            onEditAvatarClick={handleEditAvatarClick}
+            cards={cards}
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardDeleteClick={handleCardDeleteClick}
+          />} />
+        )}
+      </Routes>
       <Footer />
       <EditProfilePopup
         isOpen={isEditProfilePopupOpen}

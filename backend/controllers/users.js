@@ -79,7 +79,6 @@ const postUser = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-    console.log(user);
     return res.status(201).send({
       _id: user._id,
       name: user.name,
