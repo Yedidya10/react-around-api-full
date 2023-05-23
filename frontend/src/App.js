@@ -10,7 +10,8 @@ import EditProfilePopup from './components/EditProfilePopup';
 import EditAvatarPopup from './components/EditAvatarPopup';
 import AddPlacePopup from './components/AddPlacePopup';
 import DeletePopup from './components/DeletePopup';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useRoutes, Navigate, useNavigate } from 'react-router-dom';
+import checkAuth from './utils/checkAuth';
 import Login from './components/Login';
 import Register from './components/Register';
 import InfoTooltip from './components/InfoTooltip';
@@ -50,7 +51,6 @@ function App() {
           if (res.data._id) {
             setIsLoggedIn(true);
             setCurrentUser(res.data);
-            navigate('/');
           }
         })
         .catch((err) => console.log(err));
@@ -222,6 +222,29 @@ function App() {
     });
   }
 
+  const routing = useRoutes([
+    {
+      path: "/signup",
+      element: <Register handleRegister={handleRegister} isLoading={isLoading} />
+    },
+    {
+      path: "/signin",
+      element: <Login handleLogin={handleLogin} isLoading={isLoading} />
+    },
+    {
+      path: "/",
+      element: checkAuth() ? <Main
+        onEditProfileClick={handleEditProfileClick}
+        onAddPlaceClick={handleAddPlaceClick}
+        onEditAvatarClick={handleEditAvatarClick}
+        cards={cards}
+        onCardClick={handleCardClick}
+        onCardLike={handleCardLike}
+        onCardDeleteClick={handleCardDeleteClick}
+      /> : <Navigate to="/signin" />
+    }
+  ]);
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header
@@ -229,21 +252,7 @@ function App() {
         isLoggedIn={isLoggedIn}
         handleSignOut={handleSignOut}
       />
-      <Routes>
-        <Route path="/signup" element={<Register handleRegister={handleRegister} isLoading={isLoading} />} />
-        <Route path="/signin" element={<Login handleLogin={handleLogin} isLoading={isLoading} />} />
-        {isLoggedIn && (
-          <Route exact path="/" element={<Main
-            onEditProfileClick={handleEditProfileClick}
-            onAddPlaceClick={handleAddPlaceClick}
-            onEditAvatarClick={handleEditAvatarClick}
-            cards={cards}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDeleteClick={handleCardDeleteClick}
-          />} />
-        )}
-      </Routes>
+      {routing}
       <Footer />
       <EditProfilePopup
         isOpen={isEditProfilePopupOpen}
