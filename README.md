@@ -3,10 +3,29 @@ The API of "Around the U.S." with authorization and registration handled by the 
 
 This repository contains the full API of "Around the U.S." project that features user authorization and user registration and handles cards and users.
 
-The App can build and run on your local machine.
-Run `npm run dev` to start the server, and `npm run start` to run the client.
+## Technologies used
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* Nodemon
+* Bcrypt
+* Celebrate
+* Joi
+* Jsonwebtoken
+* Validator
+* Winston
+* Cors
 
-Front-end URL: http://localhost:3001
-Back-end URL: http://localhost:3000
+## How to run the App locally
+1. Clone this repository
+2. Run `npm install` in the root directory to install the server dependencies
+3. Run `npm install` in the client directory to install the client dependencies
+4. Run `npm run dev` to start the server
+5. Run `npm run start` to run the client
+
+### Link to the App
+Front-end URL: https://www.around.us.to or https://around.us.to
+Back-end URL: https://api.around.us.to
 
 A link to repository with the complete React application: https://github.com/Yedidya10/react-around-api-full

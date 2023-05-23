@@ -83,7 +83,7 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: `http://localhost:3000`,
+  baseUrl: `https://www.around.us.to`,
   headers: {
     Authorization: `Bearer ${localStorage.getItem('jwt')}`,
     'Content-Type': 'application/json',

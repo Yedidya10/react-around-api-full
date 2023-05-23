@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://www.around.us.to';
 
 const customFetch = (url, headers) => {
   return fetch(url, headers).then((res) =>
