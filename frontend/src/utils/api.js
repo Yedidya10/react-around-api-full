@@ -1,3 +1,5 @@
+const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.around.us.to' : 'http://localhost:3000';
+
 class Api {
   constructor({ baseUrl, headers }) {
     this._baseUrl = baseUrl;
@@ -83,7 +85,7 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: `https://www.around.us.to`,
+  baseUrl: baseUrl,
   headers: {
     Authorization: `Bearer ${localStorage.getItem('jwt')}`,
     'Content-Type': 'application/json',

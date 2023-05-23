@@ -1,4 +1,4 @@
-const BASE_URL = 'https://www.around.us.to';
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://www.around.us.to' : 'http://localhost:3000';
 
 const customFetch = (url, headers) => {
   return fetch(url, headers).then((res) =>
