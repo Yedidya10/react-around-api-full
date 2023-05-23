@@ -21,7 +21,7 @@ app.use(cors());
 const db = mongoose.connection;
 
 // Server
-const MONGODB_CONNECTION = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URL : 'mongodb://127.0.0.1:27017/arounddb';
+const MONGODB_CONNECTION = 'mongodb://127.0.0.1:27017/arounddb';
 mongoose.connect(MONGODB_CONNECTION);
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
