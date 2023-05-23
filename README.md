@@ -26,6 +26,6 @@ This repository contains the full API of "Around the U.S." project that features
 
 ### Link to the App
 Front-end URL: https://www.around.us.to or https://around.us.to
-Back-end URL: https://api.around.us.to
+Back-end URL: api.around.us.to
 
 A link to repository with the complete React application: https://github.com/Yedidya10/react-around-api-full
