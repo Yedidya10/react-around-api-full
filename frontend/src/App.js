@@ -66,6 +66,8 @@ function App() {
           }
         })
         .catch((err) => console.log(err));
+    } else {
+      navigate('/signin');
     }
   }, [isLoggedIn, navigate]);
 
