@@ -1,9 +1,15 @@
-const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.around.us.to' : 'http://localhost:3000';
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'http://api.around.us.to' : 'http://localhost:3000';
 
 class Api {
-  constructor({ baseUrl, headers }) {
+  constructor({ baseUrl }) {
     this._baseUrl = baseUrl;
-    this._headers = headers;
+  }
+
+  _getHeaders() {
+    return {
+      'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+      'Content-Type': 'application/json',
+    };
   }
 
   _checkResponse(res) {
@@ -17,19 +23,19 @@ class Api {
 
   getInitialCards() {
     return this._request(`${this._baseUrl}/cards`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
     });
   }
 
   getUserInfo() {
     return this._request(`${this._baseUrl}/users/me`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
     });
   }
 
   setUserInfo({ name, about }) {
     return this._request(`${this._baseUrl}/users/me`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
       method: 'PATCH',
       body: JSON.stringify({
         name: name,
@@ -40,7 +46,7 @@ class Api {
 
   setUserAvatar(avatar) {
     return this._request(`${this._baseUrl}/users/me/avatar`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
       method: 'PATCH',
       body: JSON.stringify({
         avatar: avatar,
@@ -50,7 +56,7 @@ class Api {
 
   createCard(data) {
     return this._request(`${this._baseUrl}/cards`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -58,7 +64,7 @@ class Api {
 
   deleteCard(cardId) {
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
       method: 'DELETE',
     });
   }
@@ -68,7 +74,7 @@ class Api {
     isLiked ? (method = 'DELETE') : (method = 'PUT');
 
     return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-      headers: this._headers,
+      headers: this._getHeaders(),
       method: method,
       body: JSON.stringify({
         userId: currentUserId,
@@ -85,11 +91,7 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: baseUrl,
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-    'Content-Type': 'application/json',
-  },
+  baseUrl: BASE_URL,
 });
 
 export default api;

@@ -1,9 +1,9 @@
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://www.around.us.to' : 'http://localhost:3000';
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'http://api.around.us.to' : 'http://localhost:3000';
 
-const customFetch = (url, headers) => {
-  return fetch(url, headers).then((res) =>
-    res.ok ? res.json() : Promise.reject(res.statusText)
-  );
+const customFetch = async (url, headers) => {
+  const res = await fetch(url, headers);
+  return await (
+    res.ok ? res.json() : Promise.reject(res.statusText));
 };
 
 export const register = (email, password) => {

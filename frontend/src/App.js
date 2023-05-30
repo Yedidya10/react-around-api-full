@@ -49,7 +49,6 @@ function App() {
         .getUserToken(jwt)
         .then((res) => {
           if (res.data._id) {
-            setIsLoggedIn(true);
             setCurrentUser(res.data);
           }
         })
@@ -58,14 +57,13 @@ function App() {
       api
         .getInitialCards()
         .then((cards) => {
-          if (cards !== []) {
+          if (cards) {
             setCards(cards);
           }
         })
         .catch((err) => console.log(err));
     }
-  }, [navigate, isLoggedIn]);
-
+  }, [isLoggedIn]);
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -196,8 +194,8 @@ function App() {
       .login(email, password)
       .then((res) => {
         if (res.token) {
-          setIsLoggedIn(true);
           localStorage.setItem('jwt', res.token);
+          setIsLoggedIn(true);
           navigate('/');
         }
       })
