@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'http://api.around.us.to' : 'http://localhost:3000';
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://api.around.us.to' : 'http://localhost:3000';
 
 class Api {
   constructor({ baseUrl }) {
