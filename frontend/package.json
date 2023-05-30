@@ -15,7 +15,7 @@
   "scripts": {
     "start": "set PORT=3001 && react-scripts start",
     "build": "react-scripts build",
-    "deploy": "npm run build && scp -r ./build/* yedidya.abergel@around.us.to:/home/yedidya.abergel/react-around-api-full/frontend/build",
+    "deploy": "npm run build && scp -r ./build/* yedidya.abergel@34.83.255.231:/home/yedidya.abergel/react-around-api-full/frontend/build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
