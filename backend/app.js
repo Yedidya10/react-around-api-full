@@ -2,10 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { errors } = require('celebrate');
+const dotenv = require('dotenv');
 const errorHandlers = require('./middlewares/errorHandlers');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
-const dotenv = require('dotenv');
+
 dotenv.config();
 
 const notFoundMessage = require('./utils/notFound');
@@ -34,16 +35,14 @@ app.use(express.json());
 //     throw new Error('Server will crash now');
 //   }, 0);
 // });
+app.use(requestLogger);
 
 app.use('/signin', signin);
 app.use('/signup', signup);
 app.use('/users', auth, users);
 app.use('/cards', auth, cards);
-app.use('/', (req, res, next) => {
-  return next(new NotFoundError(notFoundMessage));
-});
+app.use('/', (req, res, next) => next(new NotFoundError(notFoundMessage)));
 
-app.use(requestLogger);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandlers);

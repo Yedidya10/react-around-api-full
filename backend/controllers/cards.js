@@ -17,26 +17,24 @@ const deleteCard = async (req, res, next) => {
       return next(new ForbiddenError('You can delete only your own cards'));
     }
     await Card.findByIdAndDelete(req.params.cardId);
-    res.status(200).send({ succeed: 'Card is deleted' });
+    return res.status(200).send({ succeed: 'Card is deleted' });
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new BadRequestError(err.message));
-    } else {
-      return next(new ServerError('Internal server error'));
     }
+    return next(new ServerError('Internal server error'));
   }
 };
 
 const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
-    res.status(200).send(cards);
+    return res.status(200).send(cards);
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new BadRequestError(err.message));
-    } else {
-      return next(new ServerError('Internal server error'));
     }
+    return next(new ServerError('Internal server error'));
   }
 };
 
@@ -49,19 +47,18 @@ const postCard = async (req, res, next) => {
         _id: req.user._id,
       },
     });
-    res.status(201).send(card);
+    return res.status(201).send(card);
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new BadRequestError(err.message));
-    } else {
-      return next(new ServerError('Internal server error'));
     }
+    return next(new ServerError('Internal server error'));
   }
 };
 
 const putCardLike = async (req, res, next) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.user._id;
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       {
@@ -72,21 +69,20 @@ const putCardLike = async (req, res, next) => {
     if (card == null) {
       return next(new NotFoundError('Card not found'));
     }
-    res.status(201).send({ succeed: `user id ${req.user._id} like was added`, card });
+    return res.status(201).send({ succeed: `user id ${req.user._id} like was added`, card });
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new BadRequestError(err.message));
-    } else if (err.name === 'ValidationError') {
+    } if (err.name === 'ValidationError') {
       return next(new BadRequestError(err.message));
-    } else {
-      return next(new ServerError('Internal server error'));
     }
+    return next(new ServerError('Internal server error'));
   }
 };
 
 const deleteCardLike = async (req, res, next) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.user._id;
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       {
@@ -97,15 +93,14 @@ const deleteCardLike = async (req, res, next) => {
     if (card == null) {
       return next(new NotFoundError('Card not found'));
     }
-    res
+    return res
       .status(200)
       .send({ succeed: `user id ${req.user._id} like was deleted`, card });
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new BadRequestError(err.message));
-    } else {
-      return next(new ServerError('Internal server error'));
     }
+    return next(new ServerError('Internal server error'));
   }
 };
 
